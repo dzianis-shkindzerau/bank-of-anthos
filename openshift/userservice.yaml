@@ -82,7 +82,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: accounts-db-pguser-accounts-db
-              key: jdbc-uri
+              key: uri
         envFrom:
         - configMapRef:
             name: environment-config
