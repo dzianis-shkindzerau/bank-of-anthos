@@ -242,6 +242,7 @@ def create_app():
 
     # Configure database connection
     try:
+        app.logger.info('JDBC URI: %s', os.environ.get("jdbc-uri"))
         users_db = UserDb(os.environ.get("jdbc-uri"), app.logger)
         #users_db = UserDb(os.environ.get("ACCOUNTS_DB_URI"), app.logger)
     except OperationalError:
