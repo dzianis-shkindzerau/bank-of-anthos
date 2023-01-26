@@ -1,0 +1,196 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: accounts-db
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'  
+  labels:
+    app: accounts-db
+    tier: db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: accounts-db
+    app.kubernetes.io/name: accounts-db
+    app.kubernetes.io/part-of: bank-of-anthos
+spec:
+  backups:
+    pgbackrest:
+      global:
+        log-level-console: info
+        log-level-file: info
+        repo1-retention-diff: '7'
+        repo1-retention-full: '7'
+        repo1-retention-full-type: time
+      manual:
+        options:
+          - '--type=full'
+        repoName: repo1
+      repos:
+        - name: repo1
+          schedules:
+            full: 5 2 * * *
+          volume:
+            volumeClaimSpec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
+                  cpu: 50m
+                  memory: 200Mi 
+                limits:
+                  cpu: 500m
+                  memory: 512Mi          
+      #  - name: repo2
+      #    s3:
+      #      bucket: "<YOUR_AWS_S3_BUCKET_NAME>"
+      #      endpoint: "<YOUR_AWS_S3_ENDPOINT>"
+      #      region: "<YOUR_AWS_S3_REGION>"          
+  instances:
+    - affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nodes.epam.com/zone
+                    operator: In
+                    values:
+                      - 'b'
+      dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+      name: instance-zone-b
+      replicas: 1
+      resources:
+        limits:
+          cpu: 250m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      tolerations:
+        - effect: NoSchedule
+          key: nodes.epam.com/zone
+          operator: Equal
+          value: 'b'
+  monitoring:
+    pgmonitor:
+      exporter:
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 25m
+            memory: 64Mi  
+  patroni:
+    dynamicConfiguration:
+      postgresql:
+        parameters:
+          jit: false
+          maintenance_work_mem: 256MB
+          max_connections: '100'
+          shared_buffers: 512MB
+          shared_preload_libraries: 'pgaudit,pg_stat_statements,pgnodemx'
+          temp_buffers: 8MB
+          work_mem: 32MB
+        pg_hba:
+          - local all "postgres" peer
+          - hostssl replication "_crunchyrepl" all cert
+          - hostssl "postgres" "_crunchyrepl" all cert
+          - host all "_crunchyrepl" all reject
+          - hostssl all all all md5
+        use_pg_rewind: true
+    leaderLeaseDurationSeconds: 30
+    port: 8008
+    syncPeriodSeconds: 10
+  databaseInitSQL:
+    key: init.sql
+    name: accounts-db-init-sql
+  port: 5432
+  postgresVersion: 14
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accounts-db-init-sql
+  labels:
+    app: accounts-db
+    app.kubernetes.io/part-of: bank-of-anthos
+data:
+  init.sql: |
+    \c accounts-db;
+    set role "accounts-db";
+
+    CREATE TABLE IF NOT EXISTS users (
+      accountid CHAR(10) PRIMARY KEY,
+      username VARCHAR(64) UNIQUE NOT NULL,
+      passhash BYTEA NOT NULL,
+      firstname VARCHAR(64) NOT NULL,
+      lastname VARCHAR(64) NOT NULL,
+      birthday DATE NOT NULL,
+      timezone VARCHAR(8) NOT NULL,
+      address VARCHAR(64) NOT NULL,
+      state CHAR(2) NOT NULL,
+      zip VARCHAR(5) NOT NULL,
+      ssn CHAR(11) NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_users_accountid ON users (accountid);
+    CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
+
+    CREATE TABLE IF NOT EXISTS contacts (
+      username VARCHAR(64) NOT NULL,
+      label VARCHAR(128) NOT NULL,
+      account_num CHAR(10) NOT NULL,
+      routing_num CHAR(9) NOT NULL,
+      is_external BOOLEAN NOT NULL,
+      FOREIGN KEY (username) REFERENCES users(username)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_contacts_username ON contacts (username);
+
+    INSERT INTO users VALUES
+    ('1011226111', 'testuser', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Test', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+    ('1033623433', 'alice', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Alice', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+    ('1055757655', 'bob', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Bob', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333'),
+    ('1077441377', 'eve', '\x243262243132244c48334f54422e70653274596d6834534b756673727563564b3848774630494d2f34717044746868366e42352e744b575978314e61', 'Eve', 'User', '2000-01-01', '-5', 'Bowling Green, New York City', 'NY', '10004', '111-22-3333')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO contacts VALUES
+    ('testuser', 'Alice', '1033623433', '883745000', 'false')
+    ('testuser', 'Bob', '1055757655', '883745000', 'false'),
+    ('testuser', 'Eve', '1077441377', '883745000', 'false'),
+    ('alice', 'Testuser', '1011226111', '883745000', 'false'),
+    ('alice', 'Bob', '1055757655', '883745000', 'false'),
+    ('alice', 'Eve', '1077441377', '883745000', 'false'),
+    ('bob', 'Testuser', '1011226111', '883745000', 'false'),
+    ('bob', 'Alice', '1033623433', '883745000', 'false'),
+    ('bob', 'Eve', '1077441377', '883745000', 'false'),
+    ('eve', 'Testuser', '1011226111', '883745000', 'false'),
+    ('eve', 'Alice', '1033623433', '883745000', 'false'),
+    ('eve', 'Bob', '1055757655', '883745000', 'false')
+    ON CONFLICT DO NOTHING;
+
+    INSERT INTO contacts VALUES
+    ('testuser', 'External Bank', '9099791699', '808889588', 'true'),
+    ('alice', 'External Bank', '9099791699', '808889588', 'true'),
+    ('bob', 'External Bank', '9099791699', '808889588', 'true'),
+    ('eve', 'External Bank', '9099791699', '808889588', 'true')
+    ON CONFLICT DO NOTHING;
+
+#    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "accounts-db";
+#    GRANT USAGE ON SCHEMA public TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON SCHEMA public TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON DATABASE accounts-db TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON TABLE users TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON TABLE contacts TO "accounts-db";
