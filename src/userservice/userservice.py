@@ -242,7 +242,8 @@ def create_app():
 
     # Configure database connection
     try:
-        users_db = UserDb(os.environ.get("ACCOUNTS_DB_URI"), app.logger)
+        users_db = UserDb(os.environ.get("jdbc-uri"), app.logger)
+        #users_db = UserDb(os.environ.get("ACCOUNTS_DB_URI"), app.logger)
     except OperationalError:
         app.logger.critical("users_db database connection failed")
         sys.exit(1)
