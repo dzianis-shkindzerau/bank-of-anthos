@@ -78,11 +78,16 @@ spec:
         # Valid levels are debug, info, warning, error, critical. If no valid level is set, gunicorn will default to info.
         - name: LOG_LEVEL
           value: "info"
+        - name: ACCOUNTS_DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: accounts-db-pguser-accounts-db
+              key: jdbc-uri
         envFrom:
         - configMapRef:
             name: environment-config
-        - secretRef:
-            name: accounts-db-pguser-accounts-db
+        # - secretRef:
+        #     name: accounts-db-pguser-accounts-db
         #- configMapRef:    
         #    name: accounts-db-config
         readinessProbe:
