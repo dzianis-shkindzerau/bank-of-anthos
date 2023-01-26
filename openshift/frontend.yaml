@@ -20,7 +20,8 @@ metadata:
   annotations:
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git' 
-    openshift.io/generated-by: OpenShiftWebConsole
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"frontend:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"frontend\")].image","pause":"false"}]
   labels:
     app: frontend
     app.kubernetes.io/component: python-app
@@ -207,7 +208,6 @@ metadata:
   annotations:
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git' 
-    openshift.io/generated-by: OpenShiftWebConsole
   labels:
     app: frontend
     app.kubernetes.io/component: python-app

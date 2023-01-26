@@ -22,6 +22,8 @@ metadata:
     app.openshift.io/route-disabled: 'false'
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git' 
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"userservice:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"userservice\")].image","pause":"false"}]
   labels:
     app: userservice
     app.kubernetes.io/component: python-app
