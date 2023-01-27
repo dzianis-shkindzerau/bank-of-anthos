@@ -9,21 +9,18 @@ oc apply -f ./openshift/apps-build.yaml ???
 2. **Deploy Bank of Anthos to the cluster.**
 
 ```
+oc apply -f ./openshift-extras/jwt/jwt-secret.yaml
+oc apply -f ./openshift/config.yaml
+
 oc describe  template crunchy-pgadmin4-oauth -n openshift
 oc get template -n openshift crunchy-pgadmin4-oauth -o yaml | oc process -f - -p PGADMIN_USER=admin -p PGADMIN_PASSWORD=admin  | oc apply -f -
 oc delete all,cm,secrets,pvc -l app=pgadmin4
 
 oc apply -f ./openshift/accounts-db-v2.yaml
-oc delete -f ./openshift/accounts-db-v2.yaml
-
-oc apply -f ./openshift-extras/jwt/jwt-secret.yaml
-oc apply -f ./openshift/config.yaml
-
 oc apply -f ./openshift/userservice.yaml
-oc delete -f ./openshift/userservice.yaml
-
 oc apply -f ./openshift/contacts.yaml
-oc delete -f ./openshift/contacts.yaml
+oc apply -f ./openshift/frontend.yaml
+oc apply -f ./openshift/ledger-db-v2.yaml
 
 ```
 

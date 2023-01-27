@@ -1,20 +1,20 @@
 apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
-  name: accounts-db
+  name: ledger-db
   annotations:
     alpha.image.policy.openshift.io/resolve-names: '*'
     app.openshift.io/route-disabled: 'false'
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'  
   labels:
-    app: accounts-db
+    app: ledger-db
     tier: db
     app.kubernetes.io/component: database
-    app.kubernetes.io/instance: accounts-db
-    app.kubernetes.io/name: accounts-db
+    app.kubernetes.io/instance: ledger-db
+    app.kubernetes.io/name: ledger-db
     app.kubernetes.io/part-of: bank-of-anthos
-spec:         
+spec:        
   instances:
     - name: instance-zone-b
       replicas: 1
@@ -76,7 +76,7 @@ spec:
                 - ReadWriteOnce
               resources:
                 requests:
-                  storage: 1Gi
+                  storage: 1Gi 
       sidecars:
         pgbackrest:
           resources:
@@ -93,12 +93,12 @@ spec:
               memory: 200Mi
             limits:
               cpu: 250m
-              memory: 1Gi            
+              memory: 1Gi                 
       #  - name: repo2
       #    s3:
       #      bucket: "<YOUR_AWS_S3_BUCKET_NAME>"
       #      endpoint: "<YOUR_AWS_S3_ENDPOINT>"
-      #      region: "<YOUR_AWS_S3_REGION>" 
+      #      region: "<YOUR_AWS_S3_REGION>"  
   monitoring:
     pgmonitor:
       exporter:
@@ -130,9 +130,9 @@ spec:
     leaderLeaseDurationSeconds: 30
     port: 8008
     syncPeriodSeconds: 10
-  databaseInitSQL:
-    key: init.sql
-    name: accounts-db-init-sql
+  # databaseInitSQL:
+  #   key: init.sql
+  #   name: ledger-db-init-sql
   port: 5432
   postgresVersion: 14
 
@@ -141,14 +141,14 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: accounts-db-init-sql
+  name: ledger-db-init-sql
   labels:
-    app: accounts-db
+    app: ledger-db
     app.kubernetes.io/part-of: bank-of-anthos
 data:
   init.sql: |
-    \c accounts-db;
-    set role "accounts-db";
+    \c ledger-db;
+    set role "ledger-db";
 
     CREATE TABLE IF NOT EXISTS users (
       accountid CHAR(10) PRIMARY KEY,
@@ -207,11 +207,11 @@ data:
     ('eve', 'External Bank', '9099791699', '808889588', 'true')
     ON CONFLICT DO NOTHING;
 
-#    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "accounts-db";
-#    GRANT USAGE ON SCHEMA public TO "accounts-db";
-#    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "accounts-db";
-#    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO "accounts-db";
-#    GRANT ALL PRIVILEGES ON SCHEMA public TO "accounts-db";
-#    GRANT ALL PRIVILEGES ON DATABASE accounts-db TO "accounts-db";
-#    GRANT ALL PRIVILEGES ON TABLE users TO "accounts-db";
-#    GRANT ALL PRIVILEGES ON TABLE contacts TO "accounts-db";
+#    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "ledger-db";
+#    GRANT USAGE ON SCHEMA public TO "ledger-db";
+#    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "ledger-db";
+#    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO "ledger-db";
+#    GRANT ALL PRIVILEGES ON SCHEMA public TO "ledger-db";
+#    GRANT ALL PRIVILEGES ON DATABASE ledger-db TO "ledger-db";
+#    GRANT ALL PRIVILEGES ON TABLE users TO "ledger-db";
+#    GRANT ALL PRIVILEGES ON TABLE contacts TO "ledger-db";
