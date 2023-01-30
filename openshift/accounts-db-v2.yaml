@@ -3,8 +3,6 @@ kind: PostgresCluster
 metadata:
   name: accounts-db
   annotations:
-    alpha.image.policy.openshift.io/resolve-names: '*'
-    app.openshift.io/route-disabled: 'false'
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'  
   labels:
@@ -215,3 +213,62 @@ data:
 #    GRANT ALL PRIVILEGES ON DATABASE accounts-db TO "accounts-db";
 #    GRANT ALL PRIVILEGES ON TABLE users TO "accounts-db";
 #    GRANT ALL PRIVILEGES ON TABLE contacts TO "accounts-db";
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: accounts-db
+  annotations:
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'  
+  labels:
+    app: accounts-db
+    tier: db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: accounts-db
+    app.kubernetes.io/name: accounts-db
+    app.kubernetes.io/part-of: bank-of-anthos
+    postgres-operator.crunchydata.com/cluster: accounts-db
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: exporter
+      protocol: TCP
+      port: 9187
+      targetPort: 9187
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  selector:
+    postgres-operator.crunchydata.com/cluster: accounts-db
+    postgres-operator.crunchydata.com/crunchy-postgres-exporter: 'true'
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: accounts-db
+  annotations:
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'  
+  labels:
+    app: accounts-db
+    tier: db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: accounts-db
+    app.kubernetes.io/name: accounts-db
+    app.kubernetes.io/part-of: bank-of-anthos
+    postgres-operator.crunchydata.com/cluster: accounts-db
+    prometheus: paas-public
+spec:
+  endpoints:
+    - interval: 1m
+      port: exporter
+      scheme: http
+      scrapeTimeout: 10s
+  selector:
+    matchLabels:
+      postgres-operator.crunchydata.com/cluster: accounts-db
