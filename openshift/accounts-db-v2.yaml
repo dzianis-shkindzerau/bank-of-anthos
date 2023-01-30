@@ -118,12 +118,12 @@ spec:
           shared_preload_libraries: 'pgaudit,pg_stat_statements,pgnodemx'
           temp_buffers: 8MB
           work_mem: 32MB
-        pg_hba:
-          - local all "postgres" peer
-          - hostssl replication "_crunchyrepl" all cert
-          - hostssl "postgres" "_crunchyrepl" all cert
-          - host all "_crunchyrepl" all reject
-          - hostssl all all all md5
+        # pg_hba:
+        #   - local all "postgres" peer
+        #   - hostssl replication "_crunchyrepl" all cert
+        #   - hostssl "postgres" "_crunchyrepl" all cert
+        #   - host all "_crunchyrepl" all reject
+        #   - hostssl all all all md5
         use_pg_rewind: true
     leaderLeaseDurationSeconds: 30
     port: 8008
