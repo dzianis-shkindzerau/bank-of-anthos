@@ -157,9 +157,11 @@ data:
       AMOUNT INT NOT NULL,
       TIMESTAMP TIMESTAMP NOT NULL
     );
+
     -- index account number/routing number pairs
     CREATE INDEX ON TRANSACTIONS (FROM_ACCT, FROM_ROUTE, TIMESTAMP);
     CREATE INDEX ON TRANSACTIONS (TO_ACCT, TO_ROUTE, TIMESTAMP);
+
     -- append only ledger; prevent updates or deletes
     CREATE RULE PREVENT_UPDATE AS
       ON UPDATE TO TRANSACTIONS
@@ -167,6 +169,8 @@ data:
     CREATE RULE PREVENT_DELETE AS
       ON DELETE TO TRANSACTIONS
       DO INSTEAD NOTHING;
+
+# TODO: init db with test data from the ../src/ledger-db/initdb/1_create_transactions.sh script
 
 ---
 

@@ -12,32 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START gke_boa_kubernetes_manifests_contacts_deployment_contacts]
+# [START gke_boa_kubernetes_manifests_balance_reader_deployment_balancereader]
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: contacts
+  name: balancereader
   annotations:
-    alpha.image.policy.openshift.io/resolve-names: '*'
-    app.openshift.io/route-disabled: 'false'
     app.openshift.io/vcs-ref: ''
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git' 
     image.openshift.io/triggers: >-
-      [{"from":{"kind":"ImageStreamTag","name":"contacts:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"contacts\")].image","pause":"false"}]
+      [{"from":{"kind":"ImageStreamTag","name":"balancereader:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"balancereader\")].image","pause":"false"}]
   labels:
-    app: contacts
-    app.kubernetes.io/component: python-app
-    app.kubernetes.io/instance: contacts
-    app.kubernetes.io/name: contacts
+    app: balancereader
+    app.kubernetes.io/component: java-app
+    app.kubernetes.io/instance: balancereader
+    app.kubernetes.io/name: balancereader
     app.kubernetes.io/part-of: bank-of-anthos  
 spec:
   selector:
     matchLabels:
-      app: contacts
+      app: balancereader
   template:
     metadata:
       labels:
-        app: contacts
+        app: balancereader
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
@@ -47,7 +45,7 @@ spec:
       #   runAsNonRoot: true
       #   runAsUser: 1000
       containers:
-      - name: contacts
+      - name: balancereader
         # securityContext:
         #   allowPrivilegeEscalation: false
         #   capabilities:
@@ -55,8 +53,8 @@ spec:
         #       - all
         #   privileged: false
         #   readOnlyRootFilesystem: true
-        image: image-registry.openshift-image-registry.svc:5000/epm-paas-dzianis-shkindzirau/contacts:latest
-        #image: gcr.io/bank-of-anthos-ci/contacts:v0.5.10
+        image: image-registry.openshift-image-registry.svc:5000/epm-paas-dzianis-shkindzirau/balancereader:latest
+        #image: gcr.io/bank-of-anthos-ci/balancereader:v0.5.10
         volumeMounts:
         - name: publickey
           mountPath: "/tmp/.ssh"
@@ -68,36 +66,74 @@ spec:
           value: "v0.5.10"
         - name: PORT
           value: "8080"
+        # toggle Cloud Trace export
         - name: ENABLE_TRACING
           value: "false"
-        # Valid levels are debug, info, warning, error, critical.
+        - name: ENABLE_METRICS
+          value: "true"
+        - name: POLL_MS
+          value: "100"
+        - name: CACHE_SIZE
+          value: "1000000"
+        # tell Java to obey container memory limits
+        - name: JVM_OPTS
+          value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xms256m -Xmx512m"
+        # Valid levels are debug, info, warn, error, fatal.
         # If no valid level is set, will default to info.
         - name: LOG_LEVEL
           value: "info"
-        - name: ACCOUNTS_DB_URI
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: SPRING_DATASOURCE_URL
           valueFrom:
             secretKeyRef:
-              name: accounts-db-pguser-accounts-db
-              key: uri
+              name: ledger-db-pguser-ledger-db
+              key: jdbc-uri
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: ledger-db-pguser-ledger-db
+              key: user
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ledger-db-pguser-ledger-db
+              key: password
         envFrom:
         - configMapRef:
             name: environment-config
+        # add ledger-db credentials from ConfigMap
         # - configMapRef:
-        #     name: accounts-db-config
+        #     name: ledger-db-config
         resources:
           requests:
             cpu: 100m
-            memory: 64Mi
+            memory: 256Mi
           limits:
-            cpu: 250m
-            memory: 128Mi
+            cpu: 500m
+            memory: 512Mi
         readinessProbe:
           httpGet:
             path: /ready
             port: 8080
-          initialDelaySeconds: 10
+          initialDelaySeconds: 60
           periodSeconds: 5
           timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 5
+          timeoutSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /healthy
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 10
       volumes:
       - name: publickey
         secret:
@@ -107,28 +143,28 @@ spec:
             path: publickey
       - emptyDir: {}
         name: tmp
-# [END gke_boa_kubernetes_manifests_contacts_deployment_contacts]
+# [END gke_boa_kubernetes_manifests_balance_reader_deployment_balancereader]
 ---
-# [START gke_boa_kubernetes_manifests_contacts_service_contacts]
+# [START gke_boa_kubernetes_manifests_balance_reader_service_balancereader]
 apiVersion: v1
 kind: Service
 metadata:
-  name: contacts
+  name: balancereader
   labels:
-    app: contacts
-    app.kubernetes.io/component: python-app
-    app.kubernetes.io/instance: contacts
-    app.kubernetes.io/name: contacts
-    app.kubernetes.io/part-of: bank-of-anthos  
+    app: balancereader
+    app.kubernetes.io/component: java-app
+    app.kubernetes.io/instance: balancereader
+    app.kubernetes.io/name: balancereader
+    app.kubernetes.io/part-of: bank-of-anthos 
 spec:
   type: ClusterIP
   selector:
-    app: contacts
+    app: balancereader
   ports:
   - name: http
     port: 8080
     targetPort: 8080
-# [END gke_boa_kubernetes_manifests_contacts_service_contacts]
+# [END gke_boa_kubernetes_manifests_balance_reader_service_balancereader]
 
 ---
 
@@ -137,27 +173,33 @@ apiVersion: build.openshift.io/v1
 metadata:
   annotations:
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'
-  name: contacts
+  name: balancereader
   labels:
-    app: contacts
-    app.kubernetes.io/component: python-app
-    app.kubernetes.io/instance: contacts
-    app.kubernetes.io/name: contacts
+    app: balancereader
+    app.kubernetes.io/component: java-app
+    app.kubernetes.io/instance: balancereader
+    app.kubernetes.io/name: balancereader
     app.kubernetes.io/part-of: bank-of-anthos  
+    app.openshift.io/runtime: java
+    app.openshift.io/runtime-version: openjdk-17-ubi8
 spec:
   output:
     to:
       kind: ImageStreamTag
-      name: 'contacts:latest'
+      name: 'balancereader:latest'
   strategy:
-    type: Docker
-    dockerStrategy:
-      dockerfilePath: Dockerfile
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'java:openjdk-17-ubi8'
+  postCommit: {}
   source:
     type: Git
     git:
       uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'
-    contextDir: /src/contacts/
+    contextDir: /src/balancereader
   triggers:
     # - type: Generic
     #   generic:
@@ -175,14 +217,14 @@ spec:
 kind: ImageStream
 apiVersion: image.openshift.io/v1
 metadata:
-  name: contacts
+  name: balancereader
   annotations:
     app.openshift.io/vcs-uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'
   labels:
-    app: contacts
-    app.kubernetes.io/component: python-app
-    app.kubernetes.io/instance: contacts
-    app.kubernetes.io/name: contacts
+    app: balancereader
+    app.kubernetes.io/component: java-app
+    app.kubernetes.io/instance: balancereader
+    app.kubernetes.io/name: balancereader
     app.kubernetes.io/part-of: bank-of-anthos 
 spec:
   lookupPolicy:
