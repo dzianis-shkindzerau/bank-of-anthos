@@ -24,6 +24,8 @@ oc apply -f ./openshift/ledger-db-v2.yaml
 oc apply -f ./openshift/ledger-writer.yaml
 oc apply -f ./openshift/balance-reader.yaml
 oc apply -f ./openshift/transaction-history.yaml
+
+oc apply -f ./openshift/loadgenerator.yaml
 ```
 
 3. **Access the web frontend in a browser** using the frontend's external IP.
