@@ -26,13 +26,34 @@ oc get route frontend | awk '{print $2}'
 
 Visit `https://HOST` to access your instance of Bank of Anthos.
 
-4. **Uninstall Bank of Anthos from the cluster.**
+4. **Scale Up/Down application**
+
+```
+oc scale --replicas=0 dc/pgadmin4
+oc scale --replicas=0 deployment/loadgenerator
+oc scale --replicas=0 deployment/frontend
+oc scale --replicas=0 deployment/balancereader
+oc scale --replicas=0 deployment/contacts
+oc scale --replicas=0 deployment/ledgerwriter
+oc scale --replicas=0 deployment/userservice
+oc scale --replicas=0 deployment/transactionhistory
+
+oc scale --replicas=1 dc/pgadmin4
+oc scale --replicas=1 deployment/loadgenerator
+oc scale --replicas=1 deployment/frontend
+oc scale --replicas=1 deployment/balancereader
+oc scale --replicas=1 deployment/contacts
+oc scale --replicas=1 deployment/ledgerwriter
+oc scale --replicas=1 deployment/userservice
+oc scale --replicas=1 deployment/transactionhistory
+```
+
+5. **Uninstall Bank of Anthos from the cluster.**
 
 ```
 oc delete all,cm,sa,secrets,pvc -l app=pgadmin4 
 oc delete all,cm,sa,secrets,pvc,PostgresCluster -l app.kubernetes.io/part-of=bank-of-anthos
 ```
-
 
 
 # Links
