@@ -1,15 +1,18 @@
 # Quickstart (OpenShift)
 
-1. **Build Bank of Anthos images .**
+1. **Clone Bank of Anthos repository .**
 
 ```
-git clone https://github.com/GoogleCloudPlatform/bank-of-anthos.git
+git clone https://github.com/dzianis-shkindzerau/bank-of-anthos.git
 cd bank-of-anthos/
 ```
 
-2. **Deploy Bank of Anthos to the cluster.**
+2. **Deploy Bank of Anthos to the OpenShift cluster.**
 
 ```
+oc login <openshift_url>
+oc project <project_name>
+
 oc apply -f ./openshift/configs
 oc apply -f ./openshift
 oc get template -n openshift crunchy-pgadmin4-oauth -o yaml | oc process -f - -p PGADMIN_USER=admin -p PGADMIN_PASSWORD=admin  | oc apply -f -
@@ -18,10 +21,10 @@ oc get template -n openshift crunchy-pgadmin4-oauth -o yaml | oc process -f - -p
 3. **Access the web frontend in a browser** using the frontend's external IP.
 
 ```
-oc get service frontend | awk '{print $4}'
+oc get route frontend | awk '{print $2}'
 ```
 
-Visit `https://EXTERNAL_IP` to access your instance of Bank of Anthos.
+Visit `https://HOST` to access your instance of Bank of Anthos.
 
 4. **Uninstall Bank of Anthos from the cluster.**
 
