@@ -1,0 +1,38 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: bank-of-anthos-repo
+spec:
+  interval: 5m0s
+  gitImplementation: go-git
+  timeout: 20s
+  ref:
+#Default branch
+    branch: develop
+#Git
+  url: https://github.com/dzianis-shkindzerau/bank-of-anthos.git
+  # secretRef:
+  #   name: git-secret
+
+---
+
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: bank-of-anthos-kustomize
+spec:
+  #Default folder
+  path: ./openshift
+  interval: 60m
+  #Set correct target namespace for kustomize (flux) resources
+  #targetNamespace: ...
+  #Set desired status of resources after deleting it from git 
+  prune: true
+  force: false
+  sourceRef:
+    name: bank-of-anthos-repo
+    kind: GitRepository
+  timeout: 3m0s
+  retryInterval: 2m0s
+  wait: false
