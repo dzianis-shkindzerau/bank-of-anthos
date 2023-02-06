@@ -6,7 +6,3 @@ commonLabels:
 
 resources:
 - ../openshift/configs
-- ../openshift
-
-# patchesStrategicMerge:
-#   - overlay.yaml
