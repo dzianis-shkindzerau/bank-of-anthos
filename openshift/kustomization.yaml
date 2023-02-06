@@ -5,8 +5,8 @@ commonLabels:
   flux-app: bank-of-anthos-flux
 
 resources:
-- /configs
-- /manifests
+- ./configs
+- ./manifests
 
 # patchesStrategicMerge:
 #   - overlay.yaml
