@@ -26,7 +26,7 @@ spec:
   path: ./openshift
   interval: 60m
   #Set correct target namespace for kustomize (flux) resources
-  #targetNamespace: ...
+  targetNamespace: epm-paas-dzianis-shkindzirau
   #Set desired status of resources after deleting it from git 
   prune: true
   force: false
