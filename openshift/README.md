@@ -14,7 +14,7 @@ oc login <openshift_url>
 oc project <project_name>
 
 oc apply -f ./openshift/configs
-oc apply -f ./openshift
+oc apply -f ./openshift/manifests
 oc get template -n openshift crunchy-pgadmin4-oauth -o yaml | oc process -f - -p PGADMIN_USER=admin -p PGADMIN_PASSWORD=admin  | oc apply -f -
 ```
 

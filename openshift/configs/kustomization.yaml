@@ -5,4 +5,5 @@ commonLabels:
   flux-app: bank-of-anthos-flux
 
 resources:
-- ../openshift/configs
+- config.yaml
+- jwt-secret.yaml

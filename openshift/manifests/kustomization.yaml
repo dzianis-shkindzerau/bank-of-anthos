@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  flux-app: bank-of-anthos-flux
+
+resources:
+- accounts-db.yaml
+- ledger-db.yaml
+- contacts.yaml
+- userservice.yaml
+- ledger-writer.yaml
+- balance-reader.yaml
+- transaction-history.yaml
+- frontend.yaml
+- loadgenerator.yaml
+
