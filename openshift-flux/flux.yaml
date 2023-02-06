@@ -24,7 +24,7 @@ metadata:
 spec:
   #Default folder
   path: ./openshift
-  interval: 60m
+  interval: 1m
   #Set correct target namespace for kustomize (flux) resources
   targetNamespace: epm-paas-dzianis-shkindzirau
   #Set desired status of resources after deleting it from git 
