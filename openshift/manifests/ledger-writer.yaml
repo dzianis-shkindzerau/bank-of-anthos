@@ -95,6 +95,19 @@ spec:
             secretKeyRef:
               name: ledger-db-pguser-ledger-db
               key: password
+        # APM configuration
+        - name: ELASTIC_APM_SERVER_URL
+          value: 'https://localhost:8200'
+        - name: ELASTIC_APM_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ELASTIC_APM_SERVICE_VERSION
+          value: v0.0.1-dev
+        - name: ELASTIC_APM_ENVIRONMENT
+          value: bank-dev
+        - name: ELASTIC_APM_GLOBAL_LABELS
+          value: 'project=epm-paas-snek,service_type=app'
         envFrom:
         - configMapRef:
             name: environment-config

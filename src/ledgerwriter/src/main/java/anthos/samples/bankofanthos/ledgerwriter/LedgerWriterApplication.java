@@ -17,6 +17,8 @@
 package anthos.samples.bankofanthos.ledgerwriter;
 
 import com.google.cloud.MetadataConfig;
+
+import co.elastic.apm.attach.ElasticApmAttacher;
 import io.micrometer.stackdriver.StackdriverConfig;
 import io.micrometer.stackdriver.StackdriverMeterRegistry;
 import java.util.HashMap;
@@ -62,6 +64,7 @@ public class LedgerWriterApplication {
                 System.exit(1);
             }
         }
+        ElasticApmAttacher.attach();
         SpringApplication.run(LedgerWriterApplication.class, args);
         LOGGER.log(Level.forName("STARTUP", Level.FATAL.intLevel()),
             String.format("Started LedgerWriter service. Log level is: %s",
