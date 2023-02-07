@@ -12,10 +12,8 @@ cd bank-of-anthos/
 ```
 oc login <openshift_url>
 oc project <project_name>
-
-oc apply -f ./openshift/configs
-oc apply -f ./openshift/manifests
 oc get template -n openshift crunchy-pgadmin4-oauth -o yaml | oc process -f - -p PGADMIN_USER=admin -p PGADMIN_PASSWORD=admin  | oc apply -f -
+oc apply -k ./openshift
 ```
 
 3. **Access the web frontend in a browser** using the frontend's external IP.
@@ -53,6 +51,7 @@ oc scale --replicas=1 deployment/transactionhistory
 ```
 oc delete all,cm,sa,secrets,pvc -l app=pgadmin4 
 oc delete all,cm,sa,secrets,pvc,PostgresCluster -l app.kubernetes.io/part-of=bank-of-anthos
+oc delete -k ./openshift
 ```
 
 
