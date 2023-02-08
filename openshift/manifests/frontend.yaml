@@ -115,7 +115,7 @@ spec:
         - name: APM_ENABLE
           value: 'true'
         - name: ELASTIC_APM_SERVER_URL
-          value: 'https://apm-sandbox:8200'
+          value: 'https://apm-sandbox.cloudapp.epam.com'
         - name: ELASTIC_APM_SERVICE_NAME
           value: frontend
         - name: ELASTIC_APM_SERVICE_NODE_NAME
@@ -126,6 +126,8 @@ spec:
           value: bank-dev
         - name: ELASTIC_APM_GLOBAL_LABELS
           value: 'project=epm-paas-snek,service_type=app'
+        # - name: ELASTIC_APM_FRAMEWORK_NAME
+        #   value: 'flask'  
         envFrom:
         - configMapRef:
             name: environment-config

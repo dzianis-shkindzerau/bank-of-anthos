@@ -107,6 +107,9 @@ limitations under the License.
       <script>
         elasticApm.init({
             serviceName: 'frontend-ui',
+            serverUrl: 'https://apm-sandbox.cloudapp.epam.com/',
+            serviceVersion: '0.0.1',
+            environment: 'bank-dev',
             pageLoadTraceId: '{{ apm["trace_id"] }}',
             pageLoadSpanId: '{{ apm["span_id"]() }}',
             pageLoadSampled: '{{ apm["is_sampled_js"] }}'
