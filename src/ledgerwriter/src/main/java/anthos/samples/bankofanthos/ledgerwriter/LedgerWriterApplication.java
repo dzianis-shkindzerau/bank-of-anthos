@@ -51,7 +51,8 @@ public class LedgerWriterApplication {
         "PUB_KEY_PATH",
         "SPRING_DATASOURCE_URL",
         "SPRING_DATASOURCE_USERNAME",
-        "SPRING_DATASOURCE_PASSWORD"
+        "SPRING_DATASOURCE_PASSWORD",
+        "APM_ENABLE"
     };
 
     public static void main(String[] args) {
@@ -64,7 +65,9 @@ public class LedgerWriterApplication {
                 System.exit(1);
             }
         }
-        ElasticApmAttacher.attach();
+        if (System.getenv("APM_ENABLE").equals("true")) {
+            ElasticApmAttacher.attach();
+        }
         SpringApplication.run(LedgerWriterApplication.class, args);
         LOGGER.log(Level.forName("STARTUP", Level.FATAL.intLevel()),
             String.format("Started LedgerWriter service. Log level is: %s",

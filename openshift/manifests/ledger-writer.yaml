@@ -69,7 +69,7 @@ spec:
         - name: ENABLE_TRACING
           value: "false"
         - name: ENABLE_METRICS
-          value: "true"
+          value: "false"
          # tell Java to obey container memory limits
         - name: JVM_OPTS
           value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xms256m -Xmx512m"
@@ -96,16 +96,14 @@ spec:
               name: ledger-db-pguser-ledger-db
               key: password
         # APM configuration
+        - name: APM_ENABLE
+          value: 'true'
         - name: ELASTIC_APM_SERVER_URL
           value: 'https://apm-sandbox:8200'
         - name: ELASTIC_APM_SERVICE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
+          value: ledgerwriter
         - name: ELASTIC_APM_SERVICE_NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
+          value: ledgerwriter
         - name: ELASTIC_APM_SERVICE_VERSION
           value: v0.0.1-dev
         - name: ELASTIC_APM_ENVIRONMENT
