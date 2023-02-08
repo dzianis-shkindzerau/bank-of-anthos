@@ -162,5 +162,13 @@ limitations under the License.
           }
         });
       </script>
+      <script>
+        elasticApm.init({
+            serviceName: 'frontend',
+            pageLoadTraceId: '{{ apm["trace_id"] }}',
+            pageLoadSpanId: '{{ apm["span_id"]() }}',
+            pageLoadSampled: '{{ apm["is_sampled_js"] }}'
+        });
+      </script>
     </body>
 </html>
