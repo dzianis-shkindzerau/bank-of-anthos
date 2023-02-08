@@ -199,6 +199,7 @@ spec:
     type: Git
     git:
       uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'
+      ref: "develop"
     contextDir: /src/balancereader
   triggers:
     # - type: Generic

@@ -164,6 +164,7 @@ spec:
     type: Git
     git:
       uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'
+      ref: "develop"
     contextDir: /src/userservice/
   triggers:
     # - type: Generic

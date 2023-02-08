@@ -97,8 +97,12 @@ spec:
               key: password
         # APM configuration
         - name: ELASTIC_APM_SERVER_URL
-          value: 'https://localhost:8200'
+          value: 'https://apm-sandbox:8200'
         - name: ELASTIC_APM_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ELASTIC_APM_SERVICE_NODE_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
@@ -201,6 +205,7 @@ spec:
     type: Git
     git:
       uri: 'https://github.com/dzianis-shkindzerau/bank-of-anthos.git'
+      ref: "develop"
     contextDir: /src/ledgerwriter
   triggers:
     # - type: Generic
