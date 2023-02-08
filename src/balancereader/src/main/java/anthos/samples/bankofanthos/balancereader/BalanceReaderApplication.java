@@ -17,6 +17,8 @@
 package anthos.samples.bankofanthos.balancereader;
 
 import com.google.cloud.MetadataConfig;
+
+import co.elastic.apm.attach.ElasticApmAttacher;
 import io.micrometer.stackdriver.StackdriverConfig;
 import io.micrometer.stackdriver.StackdriverMeterRegistry;
 import java.util.HashMap;
@@ -47,7 +49,8 @@ public class BalanceReaderApplication {
         "PUB_KEY_PATH",
         "SPRING_DATASOURCE_URL",
         "SPRING_DATASOURCE_USERNAME",
-        "SPRING_DATASOURCE_PASSWORD"
+        "SPRING_DATASOURCE_PASSWORD",
+        "APM_ENABLE"
     };
 
     public static void main(String[] args) {
@@ -59,6 +62,9 @@ public class BalanceReaderApplication {
                     "%s environment variable not set", v));
                 System.exit(1);
             }
+        }
+        if (System.getenv("APM_ENABLE").equals("true")) {
+            ElasticApmAttacher.attach();
         }
         SpringApplication.run(BalanceReaderApplication.class, args);
         LOGGER.log(Level.forName("STARTUP", Level.FATAL.intLevel()),

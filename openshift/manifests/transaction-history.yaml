@@ -69,7 +69,7 @@ spec:
         - name: ENABLE_TRACING
           value: "false"
         - name: ENABLE_METRICS
-          value: "true"
+          value: "false"
         - name: POLL_MS
           value: "100"
         - name: CACHE_SIZE
@@ -106,6 +106,21 @@ spec:
             secretKeyRef:
               name: ledger-db-pguser-ledger-db
               key: password
+        # APM configuration
+        - name: APM_ENABLE
+          value: 'true'
+        - name: ELASTIC_APM_SERVER_URL
+          value: 'https://apm-sandbox:8200'
+        - name: ELASTIC_APM_SERVICE_NAME
+          value: transactionhistory
+        - name: ELASTIC_APM_SERVICE_NODE_NAME
+          value: transactionhistory
+        - name: ELASTIC_APM_SERVICE_VERSION
+          value: v0.0.1-dev
+        - name: ELASTIC_APM_ENVIRONMENT
+          value: bank-dev
+        - name: ELASTIC_APM_GLOBAL_LABELS
+          value: 'project=epm-paas-snek,service_type=app'
         envFrom:
         - configMapRef:
             name: environment-config
