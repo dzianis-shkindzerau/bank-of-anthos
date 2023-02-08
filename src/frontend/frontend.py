@@ -38,6 +38,7 @@ from opentelemetry.propagators.cloud_trace_propagator import CloudTraceFormatPro
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.jinja2 import Jinja2Instrumentor
+from elasticapm.contrib.flask import ElasticAPM
 
 
 # pylint: disable-msg=too-many-locals
@@ -705,6 +706,16 @@ def create_app():
         Jinja2Instrumentor().instrument()
     else:
         app.logger.info("🚫 Tracing disabled.")
+
+    # Set up APM agent
+    if os.environ['APM_ENABLE'] == "true":
+        app.logger.info("✅ Elastic APM Agent enabled.")
+        # app.config['ELASTIC_APM'] = {
+        #         'DEBUG': True
+        # }
+        apm = ElasticAPM(app, logging=True)
+    else:
+        app.logger.info("🚫 Elastic APM Agent disabled.")   
 
     return app
 

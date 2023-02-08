@@ -10,3 +10,4 @@ opentelemetry-propagator-gcp==1.4.0
 opentelemetry-instrumentation-flask==0.36b0
 opentelemetry-instrumentation-jinja2==0.36b0
 opentelemetry-instrumentation-requests==0.36b0
+elastic-apm[flask]==6.14.0
