@@ -386,7 +386,7 @@ limitations under the License.
       </script>
       <script>
         elasticApm.init({
-            serviceName: 'frontend',
+            serviceName: 'frontend-ui',
             pageLoadTraceId: '{{ apm["trace_id"] }}',
             pageLoadSpanId: '{{ apm["span_id"]() }}',
             pageLoadSampled: '{{ apm["is_sampled_js"] }}'
