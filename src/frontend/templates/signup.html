@@ -384,6 +384,7 @@ limitations under the License.
           });
         });
       </script>
+      <script type='text/javascript' src="static/elastic-apm-rum.umd.min.js"></script>
       <script>
         elasticApm.init({
             serviceName: 'frontend-ui',
@@ -391,8 +392,8 @@ limitations under the License.
             serviceVersion: '0.0.1',
             environment: 'bank-dev',
             pageLoadTraceId: '{{ apm["trace_id"] }}',
-            pageLoadSpanId: '{{ apm["span_id"]() }}',
-            pageLoadSampled: '{{ apm["is_sampled_js"] }}'
+            pageLoadSpanId: '{{ apm["span_id"]() }}'
+            // pageLoadSampled: '{{ apm["is_sampled_js"] }}'
         });
       </script>
     </body>
