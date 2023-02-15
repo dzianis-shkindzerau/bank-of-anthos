@@ -147,6 +147,7 @@ def create_app():
                                message=request.args.get('msg', None),
                                bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'),
                                apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                               apm_service_node_name=os.getenv('ELASTIC_APM_SERVICE_NODE_NAME', 'frontend'),
                                apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
                                apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
                                apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
@@ -408,6 +409,7 @@ def create_app():
                                redirect_uri=redirect_uri,
                                app_name=app_name,
                                apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                               apm_service_node_name=os.getenv('ELASTIC_APM_SERVICE_NODE_NAME', 'frontend'),
                                apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
                                apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
                                apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
@@ -487,6 +489,7 @@ def create_app():
                                 redirect_uri=redirect_uri,
                                 app_name=app_name,
                                 apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                                apm_service_node_name=os.getenv('ELASTIC_APM_SERVICE_NODE_NAME', 'frontend'),
                                 apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
                                 apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
                                 apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
@@ -557,6 +560,7 @@ def create_app():
                                pod_zone=pod_zone,
                                bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'),
                                apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                               apm_service_node_name=os.getenv('ELASTIC_APM_SERVICE_NODE_NAME', 'frontend'),
                                apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
                                apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
                                apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
