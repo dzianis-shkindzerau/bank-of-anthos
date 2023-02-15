@@ -37,6 +37,7 @@ from opentelemetry.propagate import set_global_textmap
 from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
 from opentelemetry.propagators.cloud_trace_propagator import CloudTraceFormatPropagator
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from elasticapm.contrib.flask import ElasticAPM
 
 
 def create_app():
@@ -234,6 +235,16 @@ def create_app():
         FlaskInstrumentor().instrument_app(app)
     else:
         app.logger.info("🚫 Tracing disabled.")
+
+    # Set up APM agent
+    if os.environ['APM_ENABLE'] == "true":
+        app.logger.info("✅ Elastic APM Agent enabled.")
+        # app.config['ELASTIC_APM'] = {
+        #         'DEBUG': True
+        # }
+        apm = ElasticAPM(app, logging=True)
+    else:
+        app.logger.info("🚫 Elastic APM Agent disabled.")   
 
     app.config['VERSION'] = os.environ.get('VERSION')
     app.config['EXPIRY_SECONDS'] = int(os.environ.get('TOKEN_EXPIRY_SECONDS'))
