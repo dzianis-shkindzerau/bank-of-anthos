@@ -79,6 +79,21 @@ spec:
             secretKeyRef:
               name: accounts-db-pguser-accounts-db
               key: uri
+        # APM configuration
+        - name: APM_ENABLE
+          value: 'true'
+        - name: ELASTIC_APM_SERVER_URL
+          value: 'https://apm-sandbox:8200'
+        - name: ELASTIC_APM_SERVICE_NAME
+          value: contacts
+        - name: ELASTIC_APM_SERVICE_NODE_NAME
+          value: contacts
+        - name: ELASTIC_APM_SERVICE_VERSION
+          value: v0.0.1-dev
+        - name: ELASTIC_APM_ENVIRONMENT
+          value: bank-dev
+        - name: ELASTIC_APM_GLOBAL_LABELS
+          value: 'project=epm-paas-snek,service_type=app'
         envFrom:
         - configMapRef:
             name: environment-config
