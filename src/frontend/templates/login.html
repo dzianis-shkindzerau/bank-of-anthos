@@ -165,13 +165,13 @@ limitations under the License.
       <script type='text/javascript' src="static/elastic-apm-rum.umd.min.js"></script>
       <script>
         elasticApm.init({
-            serviceName: 'frontend-ui',
-            serverUrl: 'https://apm-sandbox.cloudapp.epam.com/',
-            serviceVersion: '0.0.1',
-            environment: 'bank-dev',
+            serviceName: '{{ apm_service_name }}',
+            serverUrl: '{{ apm_server_url }}',
+            serviceVersion: '{{ apm_service_version }}',
+            environment: '{{ apm_environment }}',
             pageLoadTraceId: '{{ apm["trace_id"] }}',
-            pageLoadSpanId: '{{ apm["span_id"]() }}'
-            // pageLoadSampled: '{{ apm["is_sampled_js"] }}'
+            pageLoadSpanId: '{{ apm["span_id"]() }}',
+            pageLoadSampled: {{ apm["is_sampled_js"] }}
         });
       </script>
     </body>

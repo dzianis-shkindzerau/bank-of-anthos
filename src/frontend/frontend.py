@@ -145,7 +145,11 @@ def create_app():
                                account_id=account_id,
                                contacts=contacts,
                                message=request.args.get('msg', None),
-                               bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'))
+                               bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'),
+                               apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                               apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
+                               apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
+                               apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
 
     def _populate_contact_labels(account_id, transactions, contacts):
         """
@@ -402,7 +406,11 @@ def create_app():
                                response_type=response_type,
                                state=state,
                                redirect_uri=redirect_uri,
-                               app_name=app_name)
+                               app_name=app_name,
+                               apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                               apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
+                               apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
+                               apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
 
     @app.route('/login', methods=['POST'])
     def login():
@@ -477,7 +485,11 @@ def create_app():
                                 bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'),
                                 state=state,
                                 redirect_uri=redirect_uri,
-                                app_name=app_name)
+                                app_name=app_name,
+                                apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                                apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
+                                apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
+                                apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
 
         return make_response(redirect(url_for('login',
                                         response_type="code",
@@ -543,7 +555,11 @@ def create_app():
                                cluster_name=cluster_name,
                                pod_name=pod_name,
                                pod_zone=pod_zone,
-                               bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'))
+                               bank_name=os.getenv('BANK_NAME', 'Bank of Anthos'),
+                               apm_service_name=os.getenv('ELASTIC_APM_SERVICE_NAME', 'frontend'),
+                               apm_server_url=os.getenv('ELASTIC_APM_SERVER_URL', 'http://localhost:8200'),
+                               apm_service_version=os.getenv('ELASTIC_APM_SERVICE_VERSION', 'v0.0'),
+                               apm_environment=os.getenv('ELASTIC_APM_ENVIRONMENT', 'bank-dev'))
 
     @app.route("/signup", methods=['POST'])
     def signup():
