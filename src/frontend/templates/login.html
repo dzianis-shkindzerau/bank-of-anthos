@@ -166,13 +166,13 @@ limitations under the License.
       <script>
         elasticApm.init({
             serviceName: '{{ apm_service_name }}',
-            serviceNodeName: '{{ apm_service_node_name }}',
             serverUrl: '{{ apm_server_url }}',
             serviceVersion: '{{ apm_service_version }}',
             environment: '{{ apm_environment }}',
             pageLoadTraceId: '{{ apm["trace_id"] }}',
             pageLoadSpanId: '{{ apm["span_id"]() }}',
-            pageLoadSampled: {{ apm["is_sampled_js"] }}
+            pageLoadSampled: {{ apm["is_sampled_js"] }},
+            breakdownMetrics: true
         });
       </script>
     </body>
